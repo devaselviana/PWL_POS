@@ -23,7 +23,7 @@ class UserController extends Controller
         $activeMenu = 'user'; // set menu yang sedang aktif
 
         // Pastikan variabel $level memiliki nilai sebelum dipassing ke view
-        $level = 'default'; // Atau bisa diambil dari database
+        $level = LevelModel::all(); // Atau bisa diambil dari database
 
         return view('user.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'level' => $level, 'activeMenu' => $activeMenu]);
     }
