@@ -1,28 +1,41 @@
 <?php
 
-use App\Http\Controllers\BarangController;
-use App\Http\Controllers\KategoriController;
-use App\Http\Controllers\LevelController;
-use App\Http\Controllers\SupplierController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\POSController;
+use App\Http\Controllers\LevelController;
+use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\WelcomeController;
+use App\Http\Controllers\BarangController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\AuthController;
 
-Route::pattern('id','[0-9]+'); // artinya ketika ada parameter {id}, maka harus berupa angka
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
 
-Route::get('login', [AuthController::class,'login'])->name('login');
-Route::post('login', [AuthController::class,'postlogin']);
-Route::get('logout', [AuthController::class,'logout'])->middleware('auth');
+Route::pattern('id', '[0-9]+'); //artinya ketika parameter {id}, maka harus berupa angka
 
-Route::middleware(['auth'])->group(function(){ // artinya semua route di dalam group ini harus login dulu
-    // masukkan semua route yang perlu autentikasi di sini
-});
+Route::get('login', [AuthController::class, 'login'])->name('login');
+Route::post('login', [AuthController::class, 'postLogin']);
+Route::get('logout', [AuthController::class, 'logout'])->middleware('auth');
+
+Route::get('/register', [AuthController::class, 'register'])->name('register');
+Route::post('/register', [AuthController::class, 'store_user'])->name('store_user');
+
+
+Route::middleware(['auth'])->group(function () { // artinya semua route di dalam group ini harus login dulu
+
 
 Route::get('/', [WelcomeController::class,'index']);
 
-Route::group(['prefix' => 'user'], function () {
+Route::middleware(['authorize:ADM,MNG,STF'])->prefix('user')->group(function (){
     Route::get('/', [UserController::class, 'index']); // menampilkan halaman awal user
     Route::post('/list', [UserController::class, 'list']); // menampilkan data user dalam bentuk json untuk datatables
     Route::get('/create', [UserController::class, 'create']); // menampilkan halaman form tambah user
@@ -39,7 +52,7 @@ Route::group(['prefix' => 'user'], function () {
     Route::delete('/{id}', [UserController::class, 'destroy']); // menghapus data user
 });
 
-Route::group(['prefix' => 'level'], function () {
+Route::middleware(['authorize:ADM,MNG,STF'])->prefix('level')->group(function () {
     Route::get('/', [LevelController::class, 'index'])->name('level.index'); // Menampilkan daftar level
     Route::post('/list', [LevelController::class, 'getLevels'])->name('level.list'); // DataTables JSON
     Route::get('/create', [LevelController::class, 'create'])->name('level.create'); // Form tambah
@@ -56,7 +69,7 @@ Route::group(['prefix' => 'level'], function () {
     Route::delete('/{id}', [LevelController::class, 'destroy'])->name('level.destroy'); // Hapus level
 });
 
-Route::group(['prefix' => 'kategori'], function () {
+Route::middleware(['authorize:ADM,MNG,STF'])->prefix('kategori')->group(function () {
     Route::get('/', [KategoriController::class, 'index'])->name('kategori.index'); // Menampilkan daftar kategori
     Route::post('/list', [KategoriController::class, 'getKategori'])->name('kategori.list'); // Data JSON untuk DataTables
     Route::get('/create', [KategoriController::class, 'create'])->name('kategori.create'); // Form tambah kategori
@@ -74,7 +87,7 @@ Route::group(['prefix' => 'kategori'], function () {
 
 });
 
-Route::group(['prefix' => 'supplier'], function () {
+Route::middleware(['authorize:ADM,MNG,STF'])->prefix('supplier')->group(function () {
     Route::get('/', [SupplierController::class, 'index'])->name('supplier.index'); // Menampilkan daftar supplier
     Route::post('/list', [SupplierController::class, 'getSuppliers'])->name('supplier.list'); // Data JSON untuk DataTables
     Route::get('/create', [SupplierController::class, 'create'])->name('supplier.create'); // Form tambah supplier
@@ -91,7 +104,8 @@ Route::group(['prefix' => 'supplier'], function () {
     Route::delete('/{id}/delete_ajax', [SupplierController::class, 'delete_ajax'])->name('supplier.delete_ajax'); // Hapus supplier (AJAX)
 });
 
-Route::group(['prefix' => 'barang'], function () {
+
+Route::middleware(['authorize:ADM,MNG,STF'])->prefix('barang')->group(function () {
     Route::get('/', [BarangController::class, 'index'])->name('barang.index');
     Route::post('/list', [BarangController::class, 'getBarang'])->name('barang.list');
     Route::get('/create', [BarangController::class, 'create'])->name('barang.create');
@@ -108,26 +122,5 @@ Route::group(['prefix' => 'barang'], function () {
     Route::delete('/{id}/delete_ajax', [BarangController::class, 'delete_ajax']);
 });
 
-
-//Route::get('/', function () {
-//    return view('welcome');
-//});
-//Route::get('/level', [LevelController::class, 'index']);
-//Route::get('/kategori', [KategoriController::class, 'index']);
-//Route::get('/user', [UserController::class, 'index']);
-//Route::get('/user/tambah', [UserController::class, 'tambah']);
-//Route::post('/user/tambah_simpan', [UserController::class, 'tambah_simpan']);
-//Route::get('/user/ubah/{id}', [UserController::class, 'ubah']);
-//Route::put('/user/ubah_simpan/{id}', [UserController::class, 'ubah_simpan']);
-//Route::get('/user/hapus/{id}', [UserController::class, 'hapus']);
-//Route::get('/kategori', [KategoriController::class, 'index']);
-//Route::get('/kategori/create', [KategoriController::class, 'create']);
-//Route::post('/kategori', [KategoriController::class, 'store']);
-//Route::get('/kategori/edit/{id}', [KategoriController::class, 'edit'])->name('kategori.edit');
-//Route::put('/kategori/{id}', [KategoriController::class, 'update'])->name('kategori.update');
-//Route::get('/kategori/delete/{id}', [KategoriController::class, 'delete'])->name('kategori.delete');
-//Route::get('/kategori/create', [KategoriController::class,'create']);
-//Route::post('/kategori', [KategoriController::class, 'store']);
-//Route::post('/kategori', [KategoriController::class, 'store'])->name('kategori.store');
-//Route::resource('m_user', POSController::class);
-//Route::get('/', [WelcomeController::class,'index']);
+});
+    
