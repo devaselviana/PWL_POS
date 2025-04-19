@@ -272,8 +272,4 @@ class LevelController extends Controller
         return view('level.confirm_ajax', ['level' => $level]);
     }
 
-
-
-
 }
-

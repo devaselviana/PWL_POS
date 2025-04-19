@@ -6,6 +6,7 @@
             <h3 class="card-title">Daftar Kategori</h3>
             <div class="card-tools">
                 <a class="btn btn-sm btn-primary mt-1" href="{{ url('kategori/create') }}">Tambah Kategori</a>
+                <button onclick="modalAction('{{ url('kategori/create_ajax') }}')" class="btn btn-sm btn-success mt-1"> Tambah Ajax </button>
             </div>
         </div>
         <div class="card-body">
@@ -16,6 +17,7 @@
             @if (session('error'))
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
+
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group row">
@@ -44,14 +46,20 @@
                 </thead>
             </table>
         </div>
+        <!-- Modal -->
+        <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+        </div>
     @endsection
-
-    @push('css') 
-    <!-- Bisa ditambahkan CSS jika diperlukan -->
-    @endpush
 
     @push('js')
     <script>
+        function modalAction(url = '') {
+            $('#myModal').html(''); // Hapus isi modal sebelum load ulang
+            $('#myModal').load(url, function() {
+                $('#myModal').modal('show');
+            });
+        }
+
         $(document).ready(function() {
             var dataKategori = $('#table_kategori').DataTable({
                 processing: true,
@@ -71,32 +79,10 @@
                     { data: "aksi", className: "text-center", orderable: false, searchable: false }
                 ]
             });
-            $('#kategori_id').on('change', function(){
+
+            $('#kategori_id').on('change', function() {
                 dataKategori.ajax.reload();
             });
         });
     </script> 
     @endpush
-{{--@extends('layout.app')
-
-{{-- Customize layout sections --}}
-{{--@section('subtitle', 'Kategori')--}}
-{{--@section('content_header_title', 'Home')
-@section('content_header_subtitle', 'Kategori')
-
-@section('content')
-    <div class="container">
-        <div class="card">
-            <div class="card-header">Manage Kategori</div>
-            <div class="card-body">
-                <a href="{{ url('/kategori/create')}}" class="btn btn-success">Add</a>
-                <br><br>
-                {{ $dataTable->table() }}
-            </div>
-        </div>
-    </div>
-@endsection
-
-@push('scripts')
-    {{ $dataTable->scripts() }}
-@endpush--}}
