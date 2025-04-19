@@ -28,7 +28,7 @@ class UserModel extends Authenticatable
     }
 
     /**
-     * Relasi ke tabel level
+     * Mendapatkan nama role
      */
     public function getRoleName(): string
     {
@@ -36,10 +36,20 @@ class UserModel extends Authenticatable
     }
 
     /**
-     * Relasi ke tabel level
+     * Cek apakah user memiliki role tertentu
      */
-    public function hasRole($role): boool
+    public function hasRole($role): bool
     {
         return $this->level->level_kode == $role;
     }
+
+    /**
+     * Mendapatkan kde role
+     */
+    public function getRole()
+    {
+        return $this->level->level_kode;
+    }
+
+    
 }
