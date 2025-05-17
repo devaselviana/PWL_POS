@@ -1,9 +1,9 @@
-<form action="{{ url('/supplier/import_ajax') }}" method="POST" id="form-import-supplier" enctype="multipart/form-data">
+<form action="{{ url('/user/import_ajax') }}" method="POST" id="form-import-user" enctype="multipart/form-data">
     @csrf
     <div id="modal-master" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Import Data Supplier</h5>
+                <h5 class="modal-title">Import Data Pengguna</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -12,7 +12,7 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label>Download Template</label>
-                    <a href="{{ asset('template_supplier.xlsx') }}" class="btn btn-info btn-sm" download>
+                    <a href="{{ asset('template_user.xlsx') }}" class="btn btn-info btn-sm" download>
                         <i class="fa fa-file-excel"></i> Download
                     </a>
                     <small id="error-template" class="error-text form-text text-danger"></small>
@@ -20,8 +20,8 @@
 
                 <div class="form-group">
                     <label>Pilih File</label>
-                    <input type="file" name="file_supplier" id="file_supplier" class="form-control" required>
-                    <small id="error-file_supplier" class="error-text form-text text-danger"></small>
+                    <input type="file" name="file_user" id="file_user" class="form-control" required>
+                    <small id="error-file_user" class="error-text form-text text-danger"></small>
                 </div>
             </div>
 
@@ -35,9 +35,9 @@
 
 <script>
     $(document).ready(function () {
-        $("#form-import-supplier").validate({
+        $("#form-import-user").validate({
             rules: {
-                file_supplier: {
+                file_user: {
                     required: true,
                     extension: "xlsx"
                 },
@@ -59,10 +59,7 @@
                                 title: 'Berhasil',
                                 text: response.message
                             });
-                            // Reload tabel
-                            if (typeof dataSupplier !== 'undefined') {
-                                dataSupplier.ajax.reload();
-                            }
+                            tableUser.ajax.reload();
                         } else {
                             $('.error-text').text('');
                             $.each(response.msgField, function (prefix, val) {
